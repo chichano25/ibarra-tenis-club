@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Ibarra Tenis Club - Americana de Pádel</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent-2: #38bdf8;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --border: #334155;
+      --shadow: 0 12px 28px rgba(0,0,0,.28);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, #08101c 0%, #0f172a 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 16px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 0 20px;
+      position: sticky; top: 0; background: rgba(11,18,32,.9); backdrop-filter: blur(10px);
+      z-index: 20;
+    }
+    h1,h2,h3 { margin: 0; }
+    h1 { font-size: 1.25rem; }
+    .sub { color: var(--muted); font-size: .92rem; margin-top: 4px; }
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card {
+      background: rgba(17,24,39,.95);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .pill {
+      background: #0f172a; color: var(--accent-2); border: 1px solid #1e3a8a;
+      border-radius: 999px; padding: 6px 10px; font-size: .78rem; white-space: nowrap;
+    }
+    label { display: block; font-size: .9rem; color: var(--muted); margin-bottom: 6px; }
+    input, select, button, textarea {
+      font: inherit;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+    }
+    input, select, textarea {
+      width: 100%; background: #0b1220; color: var(--text);
+    }
+    button {
+      cursor: pointer; background: #1d4ed8; color: white; border: none; font-weight: 600;
+      transition: .18s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    button.secondary { background: #334155; }
+    button.success { background: #15803d; }
+    button.warn { background: #b45309; }
+    button.danger { background: #b91c1c; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .player-list { display: grid; gap: 8px; margin-top: 10px; }
+    .player-item {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: #0b1220;
+    }
+    .small { font-size: .86rem; color: var(--muted); }
+    .court {
+      border: 1px solid var(--border); border-radius: 16px; padding: 14px;
+      background: linear-gradient(180deg, rgba(11,18,32,1) 0%, rgba(16,24,40,1) 100%);
+    }
+    .versus { text-align: center; color: var(--muted); margin: 8px 0; font-weight: 700; }
+    .team {
+      padding: 12px; border-radius: 14px; background: #172033; border: 1px solid #263247;
+      text-align: center; font-weight: 600;
+    }
+    .score-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 12px; }
+    .score-input { font-size: 1.3rem; font-weight: 700; text-align: center; }
+    table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    tr.top td { color: #bbf7d0; font-weight: 700; }
+    .history-item { padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #0b1220; }
+    .notice { color: #cbd5e1; background: #0b1220; border: 1px dashed var(--border); border-radius: 12px; padding: 12px; }
+    .hide { display: none !important; }
+    .footer-note { color: var(--muted); text-align: center; font-size: .82rem; padding: 18px 0 8px; }
+    @media (max-width: 640px) {
+      .wrap { padding: 12px; }
+      .btn-row > * { flex: 1 1 auto; }
+      table { font-size: .82rem; }
+      th, td { padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Ibarra Tenis Club</h1>
+        <div class="sub">Americana de pádel · uso interno del club</div>
+      </div>
+      <div class="pill">PWA instalable</div>
+    </header>
+
+    <section class="grid grid-2">
+      <div class="card">
+        <div class="title-row">
+          <div>
+            <h2>Nueva jornada</h2>
+            <div class="small">Solo 4 u 8 jugadores. Un solo dispositivo.</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label for="sessionName">Nombre de la jornada</label>
+          <input id="sessionName" type="text" placeholder="Ej: Miércoles 8 PM" />
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label for="gameMode">Modalidad</label>
+          <select id="gameMode">
+            <option value="americano">Americano (sorteo)</option>
+            <option value="parejas">Parejas definidas</option>
+          </select>
+        </div>
+
+        <div id="pairNote" class="notice hide" style="margin-bottom: 12px;">
+          En modo <strong>parejas definidas</strong>, ingresa 4 u 8 jugadores. La app formará parejas fijas por orden: 1-2, 3-4, 5-6, 7-8.
+        </div>
+
+        <div class="grid grid-2" style="align-items: end;">
+          <div>
+            <label for="playerName">Nombre del jugador</label>
+            <input id="playerName" type="text" placeholder="Ej: Chris" maxlength="30" />
+          </div>
+          <button id="addPlayerBtn" class="success">Agregar jugador</button>
+        </div>
+
+        <div class="player-list" id="playerList"></div>
+
+        <div class="btn-row" style="margin-top: 14px;">
+          <button id="startSessionBtn">Crear jornada</button>
+          <button id="clearDraftBtn" class="secondary">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title-row">
+          <div>
+            <h2>Resumen</h2>
+            <div class="small">La app valida automáticamente la cantidad de jugadores.</div>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          <div class="card" style="padding:12px;background:#0b1220;">
+            <div class="small">Club</div>
+            <div><strong>Ibarra Tenis Club</strong></div>
+          </div>
+          <div class="card" style="padding:12px;background:#0b1220;">
+            <div class="small">Jugadores</div>
+            <div><strong id="summaryPlayers">0</strong></div>
+          </div>
+          <div class="card" style="padding:12px;background:#0b1220;">
+            <div class="small">Canchas activas</div>
+            <div><strong id="summaryCourts">0</strong></div>
+          </div>
+        </div>
+        <div class="notice" style="margin-top: 14px;">
+          Reglas actuales: partidos por tiempo, marcador final en juegos, victoria = 3 puntos, empate = 1, derrota = 0.
+        </div>
+      </div>
+    </section>
+
+    <section id="sessionSection" class="hide" style="margin-top:16px;">
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="title-row">
+            <div>
+              <h2 id="liveSessionTitle">Jornada activa</h2>
+              <div class="small" id="liveSessionMeta"></div>
+            </div>
+            <div class="pill" id="roundPill">Ronda 1</div>
+          </div>
+          <div class="btn-row">
+            <button id="generateRoundBtn">Generar ronda</button>
+            <button id="saveResultsBtn" class="success">Guardar resultados</button>
+            <button id="finishSessionBtn" class="warn">Finalizar jornada</button>
+          </div>
+          <div id="courtsContainer" class="grid" style="margin-top: 16px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="title-row">
+            <div>
+              <h2>Tabla general</h2>
+              <div class="small">Clasificación individual en tiempo real</div>
+            </div>
+          </div>
+          <div style="overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Jugador</th>
+                  <th>PJ</th>
+                  <th>PG</th>
+                  <th>PE</th>
+                  <th>PP</th>
+                  <th>GF</th>
+                  <th>GC</th>
+                  <th>DG</th>
+                  <th>PTS</th>
+                </tr>
+              </thead>
+              <tbody id="standingsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:16px;">
+      <div class="card">
+        <div class="title-row">
+          <div>
+            <h2>Historial</h2>
+            <div class="small">Se guarda resumen básico: fecha, jugadores y tabla final</div>
+          </div>
+          <button id="clearHistoryBtn" class="danger">Borrar historial</button>
+        </div>
+        <div id="historyContainer" class="grid"></div>
+      </div>
+    </section>
+
+    <div id="runtimeNotice" class="notice hide" style="margin-top:16px;"></div>
+    <div class="footer-note">Desarrollado para uso interno del Ibarra Tenis Club.</div>
+  </div>
+
+  <script>
+    const CLUB_NAME = 'Ibarra Tenis Club';
+    const STORAGE_KEYS = {
+      draftPlayers: 'itc_padel_draft_players',
+      currentSession: 'itc_padel_current_session',
+      history: 'itc_padel_history'
+    };
+
+    const el = (id) => document.getElementById(id);
+    const state = {
+      draftPlayers: [],
+      currentSession: null,
+      history: []
+    };
+
+    const sessionName = el('sessionName');
+    const gameMode = el('gameMode');
+    const playerName = el('playerName');
+    const playerList = el('playerList');
+    const summaryPlayers = el('summaryPlayers');
+    const summaryCourts = el('summaryCourts');
+    const pairNote = el('pairNote');
+    const sessionSection = el('sessionSection');
+    const liveSessionTitle = el('liveSessionTitle');
+    const liveSessionMeta = el('liveSessionMeta');
+    const roundPill = el('roundPill');
+    const courtsContainer = el('courtsContainer');
+    const standingsBody = el('standingsBody');
+    const historyContainer = el('historyContainer');
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    const storage = {
+      enabled: true,
+      get(key, fallback) {
+        try {
+          const value = window.localStorage.getItem(key);
+          return value === null ? fallback : value;
+        } catch (err) {
+          this.enabled = false;
+          return fallback;
+        }
+      },
+      set(key, value) {
+        try {
+          window.localStorage.setItem(key, value);
+          this.enabled = true;
+        } catch (err) {
+          this.enabled = false;
+        }
+      }
+    };
+
+    function saveAll() {
+      storage.set(STORAGE_KEYS.draftPlayers, JSON.stringify(state.draftPlayers));
+      storage.set(STORAGE_KEYS.currentSession, JSON.stringify(state.currentSession));
+      storage.set(STORAGE_KEYS.history, JSON.stringify(state.history));
+    }
+
+    function loadAll() {
+      state.draftPlayers = JSON.parse(storage.get(STORAGE_KEYS.draftPlayers, '[]'));
+      state.currentSession = JSON.parse(storage.get(STORAGE_KEYS.currentSession, 'null'));
+      state.history = JSON.parse(storage.get(STORAGE_KEYS.history, '[]'));
+    }
+
+    function updateSummary() {
+      const count = state.draftPlayers.length;
+      summaryPlayers.textContent = count;
+      summaryCourts.textContent = count === 8 ? 2 : count === 4 ? 1 : 0;
+    }
+
+    function renderDraftPlayers() {
+      playerList.innerHTML = '';
+      state.draftPlayers.forEach((p, index) => {
+        const item = document.createElement('div');
+        item.className = 'player-item';
+        item.innerHTML = `
+          <div><strong>${index + 1}. ${escapeHtml(p.name)}</strong></div>
+          <button class="danger" data-id="${p.id}">Quitar</button>
+        `;
+        item.querySelector('button').addEventListener('click', () => {
+          state.draftPlayers = state.draftPlayers.filter(x => x.id !== p.id);
+          saveAll();
+          renderDraftPlayers();
+          updateSummary();
+        });
+        playerList.appendChild(item);
+      });
+      updateSummary();
+    }
+
+    function renderHistory() {
+      historyContainer.innerHTML = '';
+      if (!state.history.length) {
+        historyContainer.innerHTML = `<div class="notice">Aún no hay jornadas guardadas.</div>`;
+        return;
+      }
+      [...state.history].reverse().forEach(entry => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        const rows = entry.standings.map((s, i) => `<tr><td>${i+1}</td><td>${escapeHtml(s.name)}</td><td>${s.points}</td><td>${s.gamesDiff}</td><td>${s.gamesFor}</td></tr>`).join('');
+        item.innerHTML = `
+          <div class="title-row" style="margin-bottom:8px;">
+            <div>
+              <strong>${escapeHtml(entry.name)}</strong>
+              <div class="small">${new Date(entry.finishedAt).toLocaleString('es-EC')} · ${entry.mode === 'americano' ? 'Americano' : 'Parejas definidas'} · ${entry.players.length} jugadores</div>
+            </div>
+          </div>
+          <div class="small" style="margin-bottom:8px;">Jugadores: ${entry.players.map(p => escapeHtml(p)).join(', ')}</div>
+          <div style="overflow:auto;">
+            <table>
+              <thead><tr><th>#</th><th>Jugador</th><th>PTS</th><th>DG</th><th>GF</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        `;
+        historyContainer.appendChild(item);
+      });
+    }
+
+    function createPlayer(name) {
+      return {
+        id: uid(),
+        name,
+        played: 0,
+        won: 0,
+        draw: 0,
+        lost: 0,
+        gamesFor: 0,
+        gamesAgainst: 0,
+        gamesDiff: 0,
+        points: 0
+      };
+    }
+
+    function startSession() {
+      const name = sessionName.value.trim() || `Jornada ${new Date().toLocaleDateString('es-EC')}`;
+      const mode = gameMode.value;
+      if (![4,8].includes(state.draftPlayers.length)) {
+        alert('La jornada solo puede crearse con 4 o 8 jugadores exactos.');
+        return;
+      }
+      state.currentSession = {
+        id: uid(),
+        club: CLUB_NAME,
+        name,
+        mode,
+        createdAt: new Date().toISOString(),
+        players: state.draftPlayers.map(p => createPlayer(p.name)),
+        rounds: [],
+        currentRound: null,
+        recentTeammates: {},
+        recentOpponents: {},
+        lastRoundPairKeys: [],
+        lastRoundOpponentKeys: []
+      };
+      saveAll();
+      renderCurrentSession();
+      alert('Jornada creada. Ahora genera la primera ronda.');
+    }
+
+    function pairKey(a, b) {
+      return [a, b].sort().join('|');
+    }
+
+    function incrementMap(map, key, amount = 1) {
+      map[key] = (map[key] || 0) + amount;
+    }
+
+    function opponentPairs(team1, team2) {
+      const keys = [];
+      for (const a of team1) {
+        for (const b of team2) {
+          keys.push(pairKey(a, b));
+        }
+      }
+      return keys;
+    }
+
+    function getPairingCost(pairings, session) {
+      let cost = 0;
+      const pairKeys = [];
+      const opponentKeys = [];
+
+      for (const match of pairings) {
+        const teamAKey = pairKey(match.teamA[0], match.teamA[1]);
+        const teamBKey = pairKey(match.teamB[0], match.teamB[1]);
+        pairKeys.push(teamAKey, teamBKey);
+        cost += (session.recentTeammates[teamAKey] || 0) * 100;
+        cost += (session.recentTeammates[teamBKey] || 0) * 100;
+        if (session.lastRoundPairKeys.includes(teamAKey)) cost += 120;
+        if (session.lastRoundPairKeys.includes(teamBKey)) cost += 120;
+
+        const oppKeys = opponentPairs(match.teamA, match.teamB);
+        opponentKeys.push(...oppKeys);
+        oppKeys.forEach(key => {
+          cost += (session.recentOpponents[key] || 0) * 40;
+          if (session.lastRoundOpponentKeys.includes(key)) cost += 60;
+        });
+      }
+      return { cost, pairKeys, opponentKeys };
+    }
+
+    function allPairingsForFour(ids) {
+      return [
+        [{ teamA: [ids[0], ids[1]], teamB: [ids[2], ids[3]] }],
+        [{ teamA: [ids[0], ids[2]], teamB: [ids[1], ids[3]] }],
+        [{ teamA: [ids[0], ids[3]], teamB: [ids[1], ids[2]] }]
+      ];
+    }
+
+    function allPairingsForEight(ids) {
+      const results = [];
+      // fixed first player to reduce duplicates
+      function choosePairForFirst(rest, first, teams) {
+        if (!rest.length) {
+          results.push(teams);
+          return;
+        }
+        const pivot = rest[0];
+        const remaining = rest.slice(1);
+        for (let i = 0; i < remaining.length; i++) {
+          const mate = remaining[i];
+          const team = [pivot, mate];
+          const next = remaining.filter((_, idx) => idx !== i);
+          if (next.length === 0) {
+            results.push([...teams, team]);
+          } else {
+            choosePairForFirst(next, next[0], [...teams, team]);
+          }
+        }
+      }
+      choosePairForFirst(ids, ids[0], []);
+      const unique = [];
+      const seen = new Set();
+      for (const teams of results) {
+        if (teams.length !== 4) continue;
+        const normalized = teams.map(t => t.slice().sort().join('-')).sort().join('/');
+        if (seen.has(normalized)) continue;
+        seen.add(normalized);
+        const matches = [
+          { teamA: teams[0], teamB: teams[1] },
+          { teamA: teams[2], teamB: teams[3] }
+        ];
+        unique.push(matches);
+      }
+      return unique;
+    }
+
+    function generateRound() {
+      const session = state.currentSession;
+      if (!session) return;
+      if (session.currentRound && !session.currentRound.saved) {
+        alert('Primero guarda los resultados de la ronda actual antes de generar otra.');
+        return;
+      }
+
+      const playerIds = session.players.map(p => p.id);
+      let candidates = [];
+      if (session.mode === 'parejas') {
+        const teams = [];
+        for (let i = 0; i < playerIds.length; i += 2) {
+          teams.push([playerIds[i], playerIds[i+1]]);
+        }
+        if (teams.length === 2) {
+          candidates = [[{ teamA: teams[0], teamB: teams[1] }]];
+        } else {
+          candidates = [
+            [{ teamA: teams[0], teamB: teams[1] }, { teamA: teams[2], teamB: teams[3] }],
+            [{ teamA: teams[0], teamB: teams[2] }, { teamA: teams[1], teamB: teams[3] }],
+            [{ teamA: teams[0], teamB: teams[3] }, { teamA: teams[1], teamB: teams[2] }]
+          ];
+        }
+      } else {
+        candidates = playerIds.length === 4 ? allPairingsForFour(playerIds) : allPairingsForEight(playerIds);
+      }
+
+      let best = null;
+      for (const candidate of candidates) {
+        const scored = getPairingCost(candidate, session);
+        if (!best || scored.cost < best.cost) {
+          best = { ...scored, matches: candidate };
+        }
+      }
+      if (!best) {
+        alert('No fue posible generar la ronda.');
+        return;
+      }
+
+      const roundNumber = session.rounds.length + 1;
+      session.currentRound = {
+        id: uid(),
+        roundNumber,
+        saved: false,
+        pairKeys: best.pairKeys,
+        opponentKeys: best.opponentKeys,
+        matches: best.matches.map((m, index) => ({
+          id: uid(),
+          court: index + 1,
+          teamA: m.teamA,
+          teamB: m.teamB,
+          scoreA: '',
+          scoreB: ''
+        }))
+      };
+      saveAll();
+      renderCurrentSession();
+    }
+
+    function getPlayer(session, id) {
+      return session.players.find(p => p.id === id);
+    }
+
+    function renderCurrentSession() {
+      const session = state.currentSession;
+      if (!session) {
+        sessionSection.classList.add('hide');
+        return;
+      }
+      sessionSection.classList.remove('hide');
+      liveSessionTitle.textContent = session.name;
+      liveSessionMeta.textContent = `${session.mode === 'americano' ? 'Americano' : 'Parejas definidas'} · ${session.players.length} jugadores · ${session.players.length === 8 ? 2 : 1} cancha(s)`;
+      roundPill.textContent = session.currentRound ? `Ronda ${session.currentRound.roundNumber}` : 'Sin ronda';
+
+      courtsContainer.innerHTML = '';
+      if (!session.currentRound) {
+        courtsContainer.innerHTML = `<div class="notice">Aún no has generado una ronda.</div>`;
+      } else {
+        session.currentRound.matches.forEach(match => {
+          const court = document.createElement('div');
+          court.className = 'court';
+          const teamA = match.teamA.map(id => escapeHtml(getPlayer(session, id).name)).join(' / ');
+          const teamB = match.teamB.map(id => escapeHtml(getPlayer(session, id).name)).join(' / ');
+          court.innerHTML = `
+            <div class="title-row">
+              <h3>Cancha ${match.court}</h3>
+              <div class="small">Ronda ${session.currentRound.roundNumber}</div>
+            </div>
+            <div class="team">${teamA}</div>
+            <div class="versus">VS</div>
+            <div class="team">${teamB}</div>
+            <div class="score-grid">
+              <input class="score-input" type="number" min="0" max="99" placeholder="0" value="${match.scoreA}" data-match="${match.id}" data-side="A" />
+              <div class="small">-</div>
+              <input class="score-input" type="number" min="0" max="99" placeholder="0" value="${match.scoreB}" data-match="${match.id}" data-side="B" />
+            </div>
+          `;
+          court.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', (e) => {
+              const id = e.target.dataset.match;
+              const side = e.target.dataset.side;
+              const value = e.target.value;
+              const target = session.currentRound.matches.find(m => m.id === id);
+              if (side === 'A') target.scoreA = value;
+              else target.scoreB = value;
+              saveAll();
+            });
+          });
+          courtsContainer.appendChild(court);
+        });
+      }
+      renderStandings();
+    }
+
+    function recalcStandings(session) {
+      session.players.forEach(p => {
+        p.played = 0; p.won = 0; p.draw = 0; p.lost = 0;
+        p.gamesFor = 0; p.gamesAgainst = 0; p.gamesDiff = 0; p.points = 0;
+      });
+
+      session.rounds.forEach(round => {
+        round.matches.forEach(match => {
+          const a = Number(match.scoreA);
+          const b = Number(match.scoreB);
+          if (!Number.isFinite(a) || !Number.isFinite(b)) return;
+          const teamAPlayers = match.teamA.map(id => getPlayer(session, id));
+          const teamBPlayers = match.teamB.map(id => getPlayer(session, id));
+
+          [...teamAPlayers, ...teamBPlayers].forEach(p => p.played++);
+          teamAPlayers.forEach(p => { p.gamesFor += a; p.gamesAgainst += b; });
+          teamBPlayers.forEach(p => { p.gamesFor += b; p.gamesAgainst += a; });
+
+          if (a > b) {
+            teamAPlayers.forEach(p => { p.won++; p.points += 3; });
+            teamBPlayers.forEach(p => p.lost++);
+          } else if (b > a) {
+            teamBPlayers.forEach(p => { p.won++; p.points += 3; });
+            teamAPlayers.forEach(p => p.lost++);
+          } else {
+            [...teamAPlayers, ...teamBPlayers].forEach(p => { p.draw++; p.points += 1; });
+          }
+        });
+      });
+
+      session.players.forEach(p => { p.gamesDiff = p.gamesFor - p.gamesAgainst; });
+    }
+
+    function getSortedStandings(session) {
+      return [...session.players].sort((a, b) =>
+        b.points - a.points ||
+        b.gamesDiff - a.gamesDiff ||
+        b.gamesFor - a.gamesFor ||
+        a.name.localeCompare(b.name, 'es')
+      );
+    }
+
+    function renderStandings() {
+      const session = state.currentSession;
+      standingsBody.innerHTML = '';
+      if (!session) return;
+      recalcStandings(session);
+      const standings = getSortedStandings(session);
+      standings.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        if (i < 3) tr.className = 'top';
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${escapeHtml(p.name)}</td>
+          <td>${p.played}</td>
+          <td>${p.won}</td>
+          <td>${p.draw}</td>
+          <td>${p.lost}</td>
+          <td>${p.gamesFor}</td>
+          <td>${p.gamesAgainst}</td>
+          <td>${p.gamesDiff}</td>
+          <td>${p.points}</td>
+        `;
+        standingsBody.appendChild(tr);
+      });
+      saveAll();
+    }
+
+    function saveRoundResults() {
+      const session = state.currentSession;
+      if (!session || !session.currentRound) return;
+
+      for (const match of session.currentRound.matches) {
+        if (match.scoreA === '' || match.scoreB === '') {
+          alert('Debes ingresar todos los marcadores antes de guardar.');
+          return;
+        }
+      }
+      session.currentRound.saved = true;
+      session.rounds.push(JSON.parse(JSON.stringify(session.currentRound)));
+      session.currentRound.pairKeys.forEach(key => incrementMap(session.recentTeammates, key));
+      session.currentRound.opponentKeys.forEach(key => incrementMap(session.recentOpponents, key));
+      session.lastRoundPairKeys = [...session.currentRound.pairKeys];
+      session.lastRoundOpponentKeys = [...session.currentRound.opponentKeys];
+      session.currentRound = null;
+      recalcStandings(session);
+      saveAll();
+      renderCurrentSession();
+      alert('Resultados guardados. Ya puedes generar la siguiente ronda.');
+    }
+
+    function finishSession() {
+      const session = state.currentSession;
+      if (!session) return;
+      if (!session.rounds.length) {
+        alert('No puedes finalizar una jornada sin al menos una ronda guardada.');
+        return;
+      }
+      recalcStandings(session);
+      const standings = getSortedStandings(session).map(p => ({
+        name: p.name,
+        points: p.points,
+        gamesFor: p.gamesFor,
+        gamesAgainst: p.gamesAgainst,
+        gamesDiff: p.gamesDiff,
+        won: p.won,
+        draw: p.draw,
+        lost: p.lost,
+        played: p.played
+      }));
+      state.history.push({
+        id: session.id,
+        name: session.name,
+        mode: session.mode,
+        players: session.players.map(p => p.name),
+        finishedAt: new Date().toISOString(),
+        standings
+      });
+      state.currentSession = null;
+      state.draftPlayers = [];
+      sessionName.value = '';
+      playerName.value = '';
+      saveAll();
+      renderDraftPlayers();
+      renderCurrentSession();
+      renderHistory();
+      updateSummary();
+      alert('Jornada finalizada y guardada en el historial.');
+    }
+
+    function clearDraft() {
+      state.draftPlayers = [];
+      saveAll();
+      renderDraftPlayers();
+      updateSummary();
+    }
+
+    function clearHistory() {
+      if (!confirm('Esto borrará todo el historial guardado.')) return;
+      state.history = [];
+      saveAll();
+      renderHistory();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    el('addPlayerBtn').addEventListener('click', () => {
+      const name = playerName.value.trim();
+      if (!name) return;
+      if (state.draftPlayers.length >= 8) {
+        alert('Máximo 8 jugadores.');
+        return;
+      }
+      state.draftPlayers.push({ id: uid(), name });
+      playerName.value = '';
+      saveAll();
+      renderDraftPlayers();
+    });
+
+    playerName.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        el('addPlayerBtn').click();
+      }
+    });
+
+    gameMode.addEventListener('change', () => {
+      pairNote.classList.toggle('hide', gameMode.value !== 'parejas');
+    });
+
+    el('startSessionBtn').addEventListener('click', startSession);
+    el('generateRoundBtn').addEventListener('click', generateRound);
+    el('saveResultsBtn').addEventListener('click', saveRoundResults);
+    el('finishSessionBtn').addEventListener('click', finishSession);
+    el('clearDraftBtn').addEventListener('click', clearDraft);
+    el('clearHistoryBtn').addEventListener('click', clearHistory);
+
+    loadAll();
+    renderDraftPlayers();
+    renderCurrentSession();
+    renderHistory();
+    updateSummary();
+    pairNote.classList.toggle('hide', gameMode.value !== 'parejas');
+
+    const runtimeNotice = el('runtimeNotice');
+    if (!storage.enabled) {
+      runtimeNotice.classList.remove('hide');
+      runtimeNotice.innerHTML = 'Esta vista no permite guardar datos localmente. La app funcionará de forma temporal, pero el historial no se conservará. Para uso correcto en iPhone, ábrela en Safari desde un enlace web.';
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.error));
+    }
+  </script>
+</body>
+</html>
